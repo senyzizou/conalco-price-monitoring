@@ -210,7 +210,7 @@
     },
     {
       "path": "tests/testthat/test-conalco-versioned.R",
-      "sha256": "ae85a66bb81a1a9e2b322499c4422b95a7ad52d698f07b8bdf9251e906fb348e"
+      "sha256": "00d5d37b3c21ec30f9e5e91c161635aba25bb206cd1f8dabd61b97290d94f7ec"
     },
     {
       "path": "tests/testthat/test-consolidation.R",
