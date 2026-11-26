@@ -1,0 +1,14 @@
+name: Conalco R environment
+description: Tested Ubuntu R setup with the renv lockfile
+runs:
+  using: composite
+  steps:
+    - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
+      with:
+        r-version: '4.6.0'
+        use-public-rspm: true
+    - name: Restore locked R packages
+      shell: bash
+      run: >-
+        Rscript --vanilla -e
+        'source("renv/activate.R"); renv::restore(prompt = FALSE)'

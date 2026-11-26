@@ -1,0 +1,220 @@
+{
+  "files": [
+    {
+      "path": ".Rbuildignore",
+      "sha256": "ef645d2c33bc4153552dbfcea1b1f577585420fe10555bbbe9ed3a608d69be8b"
+    },
+    {
+      "path": ".Rprofile",
+      "sha256": "3f9d62fc3f1bf5888a09816101b705f9844ef4cd44ee5ad157f4168dac4af4d4"
+    },
+    {
+      "path": ".github/actions/setup-apm/action.yml",
+      "sha256": "35350d4fc1c20c1d2c6187d2a75b3fac6d188fcbc86cba37576f583736ce6d67"
+    },
+    {
+      "path": ".github/workflows/conalco_daily.yml",
+      "sha256": "56580ac7dc9de936ab70ea0387d6db66224c93d310085061e2c62d47a0602f8d"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "c54e89a37e4afe44abada3066a3b6b15fa56cdbc1982afe76581be644a2457df"
+    },
+    {
+      "path": "DESCRIPTION",
+      "sha256": "c1ed7c9e8e504a0d8c176560a73acc29a946c2e534f5115abd523e5fa9e9c25d"
+    },
+    {
+      "path": "R/catalog.R",
+      "sha256": "6d4c34778297ad6a2b4f48ec8a8c00a24273a0b6c8a790800ec84df03e2e1df9"
+    },
+    {
+      "path": "R/catalog_refresh.R",
+      "sha256": "7aa44f052fe741b44b878d31bf24c6685ecc5cbd36deb9f0ac1dd47730a8dde8"
+    },
+    {
+      "path": "R/classification.R",
+      "sha256": "b01f31b88436283ac85031590e1b5608594930400a7a072058a67a2a1b3de9f9"
+    },
+    {
+      "path": "R/conalco_actions.R",
+      "sha256": "8381f0b6c1c9ddd85f928c44b7d96f1555c0eae5b1ae24220277ba16c57d63b0"
+    },
+    {
+      "path": "R/conalco_daily.R",
+      "sha256": "9da562fb191ea241d105808152b9d8f4b82499789094cea01cc7c07215b80893"
+    },
+    {
+      "path": "R/derivation.R",
+      "sha256": "27a1f5683ba883964c02255a18b1cd6862f4d7786e03d59a672a75338f6db299"
+    },
+    {
+      "path": "R/http.R",
+      "sha256": "027da6b2aaacd1a5bef5a4fd8a91f1452f88b610b8733bab097b7aebf3135d5a"
+    },
+    {
+      "path": "R/price_analysis.R",
+      "sha256": "32081e352a2b7d4d50dffa9c4b0890d41988fa915311066070359ac38a79044f"
+    },
+    {
+      "path": "R/quality.R",
+      "sha256": "a32ca984f26ac4a11bc9cef31a8b65b80acb2cc9e4110550837dba6d9ad761b3"
+    },
+    {
+      "path": "R/refresh_validation.R",
+      "sha256": "70250e85fb46435f0b5fe26546ede90d48d76956b63197aeb368ff74d439b9f0"
+    },
+    {
+      "path": "R/retailers/conalco.R",
+      "sha256": "69adcd941ae84e33a61f53e212cfae56ee41bc73df19c3b68e5649c1574a0850"
+    },
+    {
+      "path": "R/snapshot_analysis.R",
+      "sha256": "a5e454a02be9b29e21917f9d9ee108da9d10895b958a46eb2bf0b75def8f8b22"
+    },
+    {
+      "path": "R/storage.R",
+      "sha256": "84ffdaf5b80e9a87339cbab43099d91fb82f0083a8bfd84ea8bb92005aef9fd9"
+    },
+    {
+      "path": "R/storage_transport.R",
+      "sha256": "96bf2f152e566f3c3ca87f980b8c9eda1f0f15f9217677ce0b8cb9d6301ae7f1"
+    },
+    {
+      "path": "R/utils.R",
+      "sha256": "02d80c66d30cf50dbedbc5668b05423a7a86b5844b95184c4018bd25318100a3"
+    },
+    {
+      "path": "R/validate.R",
+      "sha256": "414a628d8722c7e8686ba8e6e446dfd7df9c1fec93c1f3631ea87fbf64be2908"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7b443e4f5ae23e0a9c187d2903d74bbb8e3b31cb2c01f07094349640d442e3ed"
+    },
+    {
+      "path": "config/conalco_reference_pins.json",
+      "sha256": "48ad0b8db107ba98e1a98dfa864aa7db47d5aad61e13b1e59a711fff354138e3"
+    },
+    {
+      "path": "config/conalco_storage.json",
+      "sha256": "da93e8ec52730c3aa53669dcf9d6edd2078550a1cc26658b103f630e6d819de1"
+    },
+    {
+      "path": "config/conalco_versioned_schema.json",
+      "sha256": "eee183a1b06e1ad8dd81fd7b383c03c2245c1062cebb100ba474f8fd18baa489"
+    },
+    {
+      "path": "config/public_files.txt",
+      "sha256": "6d9a24357c1814af84fd9e28aaee220e8c732a093cfe6399fba09448234b4692"
+    },
+    {
+      "path": "docs/operations.md",
+      "sha256": "697d8407baf55ad200d91ba3382b83f21b3bcc1af0e347a13f0a551505a4caa8"
+    },
+    {
+      "path": "renv.lock",
+      "sha256": "a70bbee7b8c7ed6d824495b6e70f150db43d4e929b553e9f4902b039ada59acb"
+    },
+    {
+      "path": "renv/.gitignore",
+      "sha256": "2c31e978189a98022566bd6084936f5608222b2bb9230b8d189b5a1c97a2c2da"
+    },
+    {
+      "path": "renv/activate.R",
+      "sha256": "10cb02fe000afc9814ca287f18c9e525dd8a031712a440e48eef6e1893eed94b"
+    },
+    {
+      "path": "renv/settings.json",
+      "sha256": "b04a6cfd2c731ed296be5c474ed1752ecd3157b3d22119f282487a0495490365"
+    },
+    {
+      "path": "scripts/bootstrap.R",
+      "sha256": "eb46b7cb95883a9d579c76efc898fce985eb39520c5ecf1a3e0ec433ff46b8b8"
+    },
+    {
+      "path": "scripts/conalco_actions.R",
+      "sha256": "f92ee0a0dd6c35acbdc552497a8c6389d13e75b5a454fa7d52a2228f517fc85d"
+    },
+    {
+      "path": "scripts/conalco_versioned.R",
+      "sha256": "e92e447fbe5979a93c3535ed8c2ab2974ae1597203e92f7d018b8571b059f5f4"
+    },
+    {
+      "path": "scripts/export_conalco_period.R",
+      "sha256": "310c4b2a938bfed102449e8c1b6db96fc19b7c10923ea82804775f66e52b03eb"
+    },
+    {
+      "path": "scripts/refresh_conalco.R",
+      "sha256": "d552f9afcca72d2c6af1fbb8e5a35bd9e8fa9ebc82831d3e1bea4e105da11269"
+    },
+    {
+      "path": "scripts/run_conalco_daily.R",
+      "sha256": "b31ae45f2d4556989ddc6b8c471ecbb7d19608d42e9d3f5b1fe17b227ab1937a"
+    },
+    {
+      "path": "scripts/start_conalco_refresh.R",
+      "sha256": "1a6541b61841004c84f07771f43617314518cd0f4b4e4ed42c69a42a4457c52d"
+    },
+    {
+      "path": "scripts/test.R",
+      "sha256": "004c246ce3bf1934a31fac0f2382ef537acb0305b6971fe5382ca8987d88b4d6"
+    },
+    {
+      "path": "scripts/verify_daily.R",
+      "sha256": "438dc4b6f07d935d8df0af4746f2cf27edea21d46fb75595297b894d204aa25a"
+    },
+    {
+      "path": "tests/fixtures/conalco_synthetic/beer_deposit.html",
+      "sha256": "39358aafe4eab3ba9397fcd4b1c950276bf09c81740b4b2dcc298104e5ab8f0d"
+    },
+    {
+      "path": "tests/fixtures/conalco_synthetic/beer_deposit.json",
+      "sha256": "850ada96f6ab261b6bf844fdd7bc15782ab8522929a2ce425670ae1440206fac"
+    },
+    {
+      "path": "tests/helpers/versioned_fixtures.R",
+      "sha256": "b7ca2d0f31b03607d16d962706d9ce74e060f2dcadfb064907305381233fa053"
+    },
+    {
+      "path": "tests/testthat/helper-project.R",
+      "sha256": "acd1f8fd33e347d356fb2580ec99fb185a6087d0a682dfbf65836381106b5e27"
+    },
+    {
+      "path": "tests/testthat/test-conalco-actions.R",
+      "sha256": "ab08d34d27eb7bc43db17ff27630591f1edb400ae71503bd45c1f3ef6dcac402"
+    },
+    {
+      "path": "tests/testthat/test-conalco-daily.R",
+      "sha256": "4baae7a201287e9d67853aadb620de723f380d9845095057ec7ac04684887d6b"
+    },
+    {
+      "path": "tests/testthat/test-conalco-export.R",
+      "sha256": "db6bbf284eca0647a7294a0053c58058158958afb38ec67e345de6444205570d"
+    },
+    {
+      "path": "tests/testthat/test-conalco-pagination.R",
+      "sha256": "6b52982d1f56bdff03c1cd74e215b6c12010f3c834e73361e7ec97283120e174"
+    },
+    {
+      "path": "tests/testthat/test-conalco-public-security.R",
+      "sha256": "469b4727db582ff1a028fdef720f362ded99e574269f553d9b5e2e809edeaf63"
+    },
+    {
+      "path": "tests/testthat/test-conalco-reference.R",
+      "sha256": "faabb420d7a7b547a557a4303e5e47aa8fe1aae3d1490eb36a09a987a75a8cea"
+    },
+    {
+      "path": "tests/testthat/test-conalco-startup.R",
+      "sha256": "e183b7331febe9317e15089b60b78c46ec499cfd4af8df455b7fd3280dea6c0b"
+    },
+    {
+      "path": "tests/testthat/test-conalco-versioned.R",
+      "sha256": "ae85a66bb81a1a9e2b322499c4422b95a7ad52d698f07b8bdf9251e906fb348e"
+    },
+    {
+      "path": "tests/testthat/test-consolidation.R",
+      "sha256": "f2f62192f84472d8572a062ac6bda9e96f3132eb28514ff594b2b016386ba048"
+    }
+  ]
+}

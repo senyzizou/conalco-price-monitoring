@@ -1,0 +1,9 @@
+{
+  "archive_sha256": "66875e2121f4b202fa83cf4a457df2d1ba8f312c52656800090b1f283f5b0ec3",
+  "sidecar_sha256": "ed5765d44a34369de5077e8d2bbfca7a9936f7b46ba62c6527d2d0ae052c41b5",
+  "members": {
+    "config/conalco_actions_reference.tar.gz": "43657496d0617b8668d8f436cd56eb9c1cb4e85366e4f0d5adb1abe4eec3841b",
+    "config/conalco_actions_reference.tar.gz.json": "acc2e5e86730723f87fbc900ac02771e0909f42db9d6efbb13f3b14b96f0da58",
+    "config/conalco_actions.json": "a367d1f9166c9c7242fc263c8dd8f9c87b66c218d8eaecbe7e6942201626716c"
+  }
+}

@@ -1,0 +1,149 @@
+name: Conalco Daily
+run-name: >-
+  Conalco ${{ inputs.mode || 'full' }}
+  (validated versioned results; private raw storage)
+
+on:
+  # Scheduled collection remains paused pending separate authorisation.
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Preflight or authorized full run
+        type: choice
+        default: preflight
+        options:
+          - preflight
+          - full
+          - recover
+
+permissions:
+  contents: read
+
+# One writer across branches and modes; never cancel a live collection.
+concurrency:
+  group: conalco-daily-publication
+  cancel-in-progress: false
+
+env:
+  TZ: Europe/Berlin
+  APM_DAILY_ROOT: data/conalco/daily
+  RENV_CONFIG_SYNCHRONIZED_CHECK: 'FALSE'
+
+jobs:
+  preflight:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      vars.CONALCO_OPERATIONS_ENABLED == 'true' &&
+      inputs.mode == 'preflight' &&
+      github.ref == 'refs/heads/main' &&
+      github.repository == 'senyzizou/conalco-price-monitoring'
+    environment: conalco-ukebox
+    runs-on: ubuntu-24.04
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install R and restore locked packages
+        timeout-minutes: 25
+        uses: ./.github/actions/setup-apm
+      - name: Targeted offline tests
+        timeout-minutes: 30
+        run: |
+          if ! Rscript --vanilla scripts/conalco_actions.R --tests-fast \
+              > "$RUNNER_TEMP/conalco-tests.log" 2>&1; then
+            echo 'Conalco offline checks failed. Reproduce locally.'
+            exit 1
+          fi
+      - name: Extended offline startup regressions
+        timeout-minutes: 10
+        run: |
+          if ! Rscript --vanilla scripts/conalco_actions.R --tests-extended \
+              > "$RUNNER_TEMP/conalco-startup.log" 2>&1; then
+            echo 'Conalco offline checks failed. Reproduce locally.'
+            exit 1
+          fi
+      - name: Offline pipeline and harmless WebDAV check
+        timeout-minutes: 30
+        env:
+          CONALCO_REFERENCE_ARCHIVE: ${{ secrets.CONALCO_REFERENCE_ARCHIVE }}
+          UKEBOX_WEBDAV_URL: ${{ secrets.UKEBOX_WEBDAV_URL }}
+          UKEBOX_USERNAME: ${{ secrets.UKEBOX_USERNAME }}
+          UKEBOX_APP_PASSWORD: ${{ secrets.UKEBOX_APP_PASSWORD }}
+        run: |
+          if ! Rscript --vanilla scripts/conalco_actions.R --preflight \
+              > "$RUNNER_TEMP/conalco-preflight.log" 2>&1; then
+            echo 'Conalco preflight failed. Inspect private state.'
+            exit 1
+          fi
+
+  full:
+    if: >-
+      ((github.event_name == 'workflow_dispatch' &&
+        (inputs.mode == 'full' || inputs.mode == 'recover')) ||
+       github.event_name == 'schedule') &&
+      vars.CONALCO_OPERATIONS_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      github.repository == 'senyzizou/conalco-price-monitoring'
+    environment: conalco-ukebox
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Install R and restore locked packages
+        timeout-minutes: 25
+        uses: ./.github/actions/setup-apm
+      - name: Targeted offline tests
+        timeout-minutes: 30
+        run: |
+          if ! Rscript --vanilla scripts/conalco_actions.R --tests-fast \
+              > "$RUNNER_TEMP/conalco-tests.log" 2>&1; then
+            echo 'Conalco offline checks failed. Reproduce locally.'
+            exit 1
+          fi
+      - name: Collect or recover, validate and archive to UKEbox
+        timeout-minutes: 240
+        env:
+          CONALCO_REFERENCE_ARCHIVE: ${{ secrets.CONALCO_REFERENCE_ARCHIVE }}
+          UKEBOX_WEBDAV_URL: ${{ secrets.UKEBOX_WEBDAV_URL }}
+          UKEBOX_USERNAME: ${{ secrets.UKEBOX_USERNAME }}
+          UKEBOX_APP_PASSWORD: ${{ secrets.UKEBOX_APP_PASSWORD }}
+          CONALCO_MODE: ${{ inputs.mode }}
+          RECOVERY_ARCHIVE: >-
+            ${{ inputs.mode == 'recover' && secrets.CONALCO_RECOVERY_ARCHIVE
+              || '' }}
+        run: |
+          set -euo pipefail
+          if [[ "$CONALCO_MODE" == recover ]]; then
+            if [[ -z "$RECOVERY_ARCHIVE" ]]; then
+              echo 'Private recovery reference missing.'
+              exit 1
+            fi
+            operation=--recover
+          else
+            operation=--full
+          fi
+          if ! Rscript --vanilla scripts/conalco_actions.R "$operation" \
+              > "$RUNNER_TEMP/conalco-full.log" 2>&1; then
+            echo 'Conalco run failed. Inspect private state before recovery.'
+            exit 1
+          fi
+      - name: Retain run status and recovery data in UKEbox
+        if: always()
+        timeout-minutes: 30
+        env:
+          UKEBOX_WEBDAV_URL: ${{ secrets.UKEBOX_WEBDAV_URL }}
+          UKEBOX_USERNAME: ${{ secrets.UKEBOX_USERNAME }}
+          UKEBOX_APP_PASSWORD: ${{ secrets.UKEBOX_APP_PASSWORD }}
+        run: |
+          if ! Rscript --vanilla scripts/conalco_actions.R --retain-attempt \
+              > "$RUNNER_TEMP/conalco-retain-attempt.log" 2>&1; then
+            echo 'Conalco retain-attempt failed. Inspect private state.'
+            exit 1
+          fi

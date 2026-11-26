@@ -1,0 +1,9 @@
+Package: conalcopricemonitoring
+Title: Conalco Alcohol Price Monitoring
+Version: 0.3.0
+Authors@R: person("Project", "Team", role = "aut")
+Description: Reproducible research proof of concept with immutable HTTP archives
+    and longitudinal product observations. Not a production crawler.
+Encoding: UTF-8
+Imports: httr2, xml2, jsonlite, digest, testthat, renv, dplyr, tibble, curl, magrittr, withr, callr,
+    processx, ps

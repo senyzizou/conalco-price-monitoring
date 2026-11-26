@@ -1,0 +1,21 @@
+{
+  "request_url": "https://www.conalco.de/synthetic-test-pils-0-25l",
+  "final_url": "https://www.conalco.de/synthetic-test-pils-0-25l",
+  "request_started_at_utc": "2026-10-07T10:00:00.000000Z",
+  "observed_at_utc": "2026-10-07T10:00:01.000000Z",
+  "response_status": 200,
+  "headers": {
+    "content-type": "text/html; charset=UTF-8"
+  },
+  "error": null,
+  "user_agent": "synthetic fixture, no request",
+  "run_id": "synthetic_conalco_fixture",
+  "retailer": "conalco",
+  "request_type": "product",
+  "retailer_product_id": null,
+  "scraper_version": "0.1.0",
+  "raw_file": "tests/fixtures/conalco_synthetic/beer_deposit.html",
+  "raw_sha256": "39358aafe4eab3ba9397fcd4b1c950276bf09c81740b4b2dcc298104e5ab8f0d",
+  "metadata_file": "tests/fixtures/conalco_synthetic/beer_deposit.json",
+  "purpose": "synthetic_parser_fixture_not_observation"
+}

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "local_storage": "legacy",
+  "github_publication": "versioned",
+  "ukebox_results": "incremental",
+  "versioned_root": "data/conalco/versioned",
+  "ukebox_base": "APM/conalco/versioned/v1",
+  "schema": "config/conalco_versioned_schema.json"
+}
