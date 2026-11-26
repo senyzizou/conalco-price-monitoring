@@ -135,7 +135,9 @@ test_that('missing and damaged version files fail closed', {
   }
 })
 
-test_that('complete local publication requires manual approval every time', {
+test_that('local publication rejects a schedule outside GitHub Actions', {
+  local_envvar(c(GITHUB_ACTIONS = NA_character_, GITHUB_REF = NA_character_,
+    GITHUB_REPOSITORY = NA_character_))
   local_dir(versioned_test_workspace())
   conalco_init_versioned('store', initial_empty = T)
   versioned_test_ingest('store', versioned_test_rows())
