@@ -14,7 +14,7 @@
     },
     {
       "path": ".github/workflows/conalco_daily.yml",
-      "sha256": "56580ac7dc9de936ab70ea0387d6db66224c93d310085061e2c62d47a0602f8d"
+      "sha256": "7397374464cd240073ac3deeebc3c7e10dee9cde7575fa9134b0500df807a269"
     },
     {
       "path": ".gitignore",
@@ -182,7 +182,7 @@
     },
     {
       "path": "tests/testthat/test-conalco-actions.R",
-      "sha256": "ab08d34d27eb7bc43db17ff27630591f1edb400ae71503bd45c1f3ef6dcac402"
+      "sha256": "3c73c856210df6e06120eb4a4657a0cf9a99e3ad29154afba556df6ccd0c8bab"
     },
     {
       "path": "tests/testthat/test-conalco-daily.R",

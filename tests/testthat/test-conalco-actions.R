@@ -424,7 +424,7 @@ test_that('daily fast tests and extended startup checks both remain required', {
     job_limit = grep('^    timeout-minutes: [0-9]+$', job, value = T)
     if (length(job_limit) != 1L) stop('Ambiguous preflight job timeout')
     job_limit = as.integer(sub('.*: ', '', job_limit))
-    if (job_limit != 110L) stop('Preflight job timeout must be 110')
+    if (job_limit != 140L) stop('Preflight job timeout must be 140')
     start = which(job == paste0('      - name: ',
       'Offline pipeline and harmless WebDAV check'))
     if (length(start) != 1L) stop('Missing or ambiguous WebDAV step')
@@ -434,7 +434,7 @@ test_that('daily fast tests and extended startup checks both remain required', {
       job[start:end], value = T)
     if (length(step_limit) != 1L) stop('Ambiguous WebDAV step timeout')
     step_limit = as.integer(sub('.*: ', '', step_limit))
-    if (step_limit != 30L) stop('WebDAV step timeout must be 30')
+    if (step_limit != 60L) stop('WebDAV step timeout must be 60')
     budgets = grep('^        timeout-minutes: [0-9]+$', job, value = T)
     if (job_limit <= sum(as.integer(sub('.*: ', '', budgets))))
       stop('Preflight job budget must exceed explicit step budgets')
@@ -444,20 +444,20 @@ test_that('daily fast tests and extended startup checks both remain required', {
   # Mutate only a copy; other jobs cannot supply the required timeout values.
   job_start = match('  preflight:', workflow)
   job_rows = seq.int(job_start, full - 1L)
-  job_timeout = job_rows[workflow[job_rows] == '    timeout-minutes: 110']
+  job_timeout = job_rows[workflow[job_rows] == '    timeout-minutes: 140']
   webdav = match(paste0('      - name: ',
     'Offline pipeline and harmless WebDAV check'), workflow)
   wrong_job = workflow
-  wrong_job[job_timeout] = '    timeout-minutes: 60'
+  wrong_job[job_timeout] = '    timeout-minutes: 110'
   wrong_job[match('    timeout-minutes: 360', workflow)] =
     '    timeout-minutes: 90'
-  expect_error(check_preflight(wrong_job), 'job timeout must be 110')
+  expect_error(check_preflight(wrong_job), 'job timeout must be 140')
   wrong_step = workflow
   wrong_step[webdav + 1L] = '        timeout-minutes: 5'
   setup = match('      - name: Install R and restore locked packages',
     workflow)
   wrong_step[setup + 1L] = '        timeout-minutes: 30'
-  expect_error(check_preflight(wrong_step), 'step timeout must be 30')
+  expect_error(check_preflight(wrong_step), 'step timeout must be 60')
   insufficient = workflow
   insufficient[setup + 1L] = '        timeout-minutes: 40'
   expect_error(check_preflight(insufficient), 'exceed explicit step budgets')
