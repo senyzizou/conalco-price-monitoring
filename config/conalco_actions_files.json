@@ -38,11 +38,11 @@
     },
     {
       "path": "R/conalco_actions.R",
-      "sha256": "8381f0b6c1c9ddd85f928c44b7d96f1555c0eae5b1ae24220277ba16c57d63b0"
+      "sha256": "fa934cf3f7c0a9e0776b846f466963bef71ee0bb721b23844cb842fd489edfb7"
     },
     {
       "path": "R/conalco_daily.R",
-      "sha256": "9da562fb191ea241d105808152b9d8f4b82499789094cea01cc7c07215b80893"
+      "sha256": "8713610db7878d8eefc07b52dfe6ab593400766f3557a52f1d2d46784c25e7fd"
     },
     {
       "path": "R/derivation.R",
@@ -110,7 +110,7 @@
     },
     {
       "path": "docs/operations.md",
-      "sha256": "697d8407baf55ad200d91ba3382b83f21b3bcc1af0e347a13f0a551505a4caa8"
+      "sha256": "440400ab45ed16254ce89465a367640c8b700f5ff4bd009b5b073213f1d8342f"
     },
     {
       "path": "renv.lock",
@@ -134,7 +134,7 @@
     },
     {
       "path": "scripts/conalco_actions.R",
-      "sha256": "f92ee0a0dd6c35acbdc552497a8c6389d13e75b5a454fa7d52a2228f517fc85d"
+      "sha256": "91a00ebc9177ea64a3add57b708934b4d3accdcceceb89c7e5f8bfe6599373c9"
     },
     {
       "path": "scripts/conalco_versioned.R",
@@ -182,7 +182,7 @@
     },
     {
       "path": "tests/testthat/test-conalco-actions.R",
-      "sha256": "3c73c856210df6e06120eb4a4657a0cf9a99e3ad29154afba556df6ccd0c8bab"
+      "sha256": "cc6fa08bb84ecee41a3d75d99f326f811cce58025b654887faa843d9eef5b936"
     },
     {
       "path": "tests/testthat/test-conalco-daily.R",

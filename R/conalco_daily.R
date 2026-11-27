@@ -138,7 +138,8 @@ daily_run_records = \(root) {
   records
 }
 
-daily_rebuild_views = \(root, records = daily_run_records(root)) {
+daily_rebuild_views = \(root, records = daily_run_records(root),
+    frozen = getOption('apm.conalco.frozen_statistics')) {
   if (!length(records)) stop('No committed daily runs')
   dates = vapply(records, `[[`, '', 'date')
   if (anyDuplicated(dates)) stop('Duplicate committed Berlin dates')
@@ -162,16 +163,34 @@ daily_rebuild_views = \(root, records = daily_run_records(root)) {
           !all(day$run_id == record$run_id))
         stop('Duplicate, missing or inconsistent daily identities')
       day = day[order(day$retailer, day$retailer_product_id), ]
-      state$statistics[[record$run_id]] = daily_statistics(day)
+      statistics = if (is.null(frozen)) NULL else
+        frozen[frozen$date == record$date, , drop = F]
+      if (is.null(statistics) || !nrow(statistics)) {
+        statistics = daily_statistics(day)
+      } else {
+        stopifnot(all(statistics$run_id == record$run_id))
+      }
+      state$statistics[[record$run_id]] = statistics
       for (column in setdiff(columns, names(day))) day[[column]] = NA_character_
       write.table(day[columns], connection, sep = ',', row.names = FALSE,
         col.names = state$n == 0L, na = '', qmethod = 'double')
       state$n = state$n + nrow(day)
     }
   })
-  statistics = bind_rows(state$statistics)
-  daily_replace(file.path(root, 'statistics.csv'), \(path)
-    write.csv(statistics, path, row.names = FALSE, na = ''))
+  daily_replace(file.path(root, 'statistics.csv'), \(path) {
+    if (is.null(frozen)) {
+      write.csv(bind_rows(state$statistics), path, row.names = F, na = '')
+    } else {
+      connection = file(path, 'wt')
+      on.exit(close(connection))
+      for (i in seq_along(state$statistics)) {
+        rows = state$statistics[[i]]
+        stopifnot(identical(names(rows), names(frozen)))
+        write.table(rows, connection, sep = ',', row.names = F,
+          col.names = i == 1L, na = '', qmethod = 'double')
+      }
+    }
+  })
   receipt = list(analysis_version = CONALCO_DAILY_VERSION,
     updated_at_utc = utc_now(), n_observations = state$n,
     n_runs = length(records), run_ids = vapply(records, `[[`, '', 'run_id'),
@@ -830,9 +849,8 @@ conalco_legacy_view = \(root, output, dates = names(dedup_history(root)),
       records[[i]]$observations$path = file.path(output,
         records[[i]]$observations$path)
     }
-    daily_rebuild_views(target, records)
-    write.csv(conalco_versioned_statistics(root, dates),
-      file.path(target, 'statistics.csv'), row.names = FALSE, na = '')
+    daily_rebuild_views(target, records,
+      frozen = conalco_versioned_statistics(root, dates))
     # Freeze portable paths after the builder has validated all actual files.
     manifest = read_json(file.path(target, 'manifest.json'))
     manifest$panel$path = file.path(daily_root, 'panel.csv.gz')

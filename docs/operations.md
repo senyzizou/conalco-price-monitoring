@@ -11,6 +11,8 @@ Der Tageslauf stellt den letzten validierten Ergebniscommit einschließlich
 der Archivkette wieder her, prüft den Berliner Erhebungstag und verwendet die
 bestehende gemeinsame Writer-Sperre. Danach prüft er die neue Erhebung,
 archiviert die Originalantworten und veröffentlicht das Ergebnisinkrement.
+Die Legacy-Ansicht übernimmt eingefrorene Statistiken der wiederhergestellten
+Tage. Sie berechnet nur die Statistik des neuen Erhebungstags.
 Erst der Tagescommit macht einen Abschluss gültig. Wissenschaftliche
 Ableitungen bleiben in R. Das versionierte Schema steht unter `config/`.
 
@@ -35,7 +37,9 @@ Ableitungen bleiben in R. Das versionierte Schema steht unter `config/`.
    Genehmigung verlangen. Der Standardbranch bleibt geschützt.
 
 Die privaten R-Diagnosen werden während eines Jobs in seiner temporären
-Umgebung gehalten. Öffentliche Logs enthalten feste Betriebsstatusmeldungen.
+Umgebung gehalten. Eine strukturierte Phasenspur mit Status und Laufzeiten
+wird mit dem bestehenden technischen Versuch privat auf UKEbox gesichert.
+Öffentliche Logs enthalten feste Betriebsstatusmeldungen.
 Der Workflow legt keine GitHub-Artefakte oder Caches an. Bei mehrdeutigem
 Upload zuvor den privaten Serverzustand klären. Die bestehende Wiederaufnahme
 verwendet einen eindeutig validierten privaten Roharchivbeleg. Für den
