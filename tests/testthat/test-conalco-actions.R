@@ -77,6 +77,8 @@ test_that('missing secrets name only the missing key', {
 })
 
 test_that('phase timings preserve results and failures without contents', {
+  path = tempfile()
+  local_options(apm.conalco.phase_log = path)
   output = capture.output({ value = actions_phase('test.phase', 42L) })
   expect_identical(value, 42L)
   expect_match(output[1], 'test.phase: start', fixed = T)
@@ -89,6 +91,14 @@ test_that('phase timings preserve results and failures without contents', {
   expect_identical(error, failure)
   expect_match(output[2], 'test.phase: failed [(][0-9.]+ s[)]')
   expect_false(any(grepl('private|secret-content', output)))
+  lines = readLines(path)
+  expect_false(any(grepl('private|secret-content', lines)))
+  entries = lapply(lines, fromJSON)
+  expect_identical(vapply(entries, `[[`, '', 'event'),
+    rep(c('phase_start', 'phase_end'), 2L))
+  ends = entries[c(2L, 4L)]
+  expect_identical(vapply(ends, `[[`, '', 'status'), c('ok', 'failed'))
+  expect_true(all(vapply(ends, `[[`, 0, 'elapsed_seconds') >= 0))
 })
 
 test_that('WebDAV keeps bounded requests and sanitized immediate failures', {
@@ -350,9 +360,13 @@ test_that('full orchestration restores state and commits only after upload', {
   target = ensure_dir(tempfile('fresh_runner_'))
   restored = actions_state_restore(state$dav, target)
   expect_length(restored$records, 2L)
+  phase_path = 'logs/conalco_daily/runner_phases.jsonl'
+  log_event(phase_path, 'phase_end', phase = 'full.execution',
+    status = 'ok', elapsed_seconds = 1)
   actions_retain_attempt(state$dav)
   attempt = list.files('tmp/actions_attempt', '[.]tar[.]gz$', full.names = T)
   retained = untar(attempt, list = T, tar = 'internal')
+  expect_true(phase_path %in% retained)
   expect_true(any(endsWith(retained, 'checkpoint.rds')))
   expect_false(any(endsWith(retained, '.tar.gz')))
   scope$run_conalco_daily = \(...) stop('Repeated day attempted scraping')
@@ -779,6 +793,39 @@ test_that('failed connection stops preflight before state restoration', {
   expect_true(any(grepl('preflight.connection: failed', output, fixed = T)))
   expect_false(any(grepl('preflight.state_restore: start', output, fixed = T)))
   expect_false(any(grepl('Preflight passed', output, fixed = T)))
+})
+
+test_that('only the new day is calculated when rebuilding legacy views', {
+  local_dir(versioned_test_workspace())
+  conalco_init_versioned('store', initial_empty = T)
+  versioned_test_ingest('store', versioned_test_rows())
+  second = '2030-01-02'
+  versioned_test_ingest('store', versioned_test_rows(second))
+  conalco_legacy_view('store', 'scratch', panel = F, daily_root = 'legacy')
+  records = lapply(list.files('scratch/legacy/runs', '^manifest[.]json$',
+    recursive = T, full.names = T), read_json)
+  for (i in seq_along(records))
+    records[[i]]$observations$path = file.path('scratch',
+      records[[i]]$observations$path)
+  original = conalco_versioned_statistics('store', '2030-01-01')
+  prior = original
+  prior$mean[1] = '987'
+  calculate = daily_statistics
+  rlang::local_bindings(daily_statistics = \(day) {
+    stopifnot(all(day$daily_date == second))
+    calculate(day)
+  }, .env = environment(daily_rebuild_views))
+  daily_rebuild_views('scratch/legacy', records, frozen = prior)
+  values = dedup_read('scratch/legacy/statistics.csv')
+  historical = values[values$date == '2030-01-01', ]
+  expect_identical(historical, prior)
+  expect_identical(conalco_versioned_statistics('store', '2030-01-01'),
+    original)
+  expect_error(conalco_capture_statistics('store',
+    'scratch/legacy/statistics.csv'), 'identical')
+  daily_rebuild_views('scratch/legacy', records, frozen = original)
+  expect_silent(conalco_capture_statistics('store',
+    'scratch/legacy/statistics.csv'))
 })
 
 test_that('incremental restore timings retain validation and read-only I/O', {

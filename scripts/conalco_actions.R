@@ -41,12 +41,16 @@ if (privileged && (!identical(Sys.getenv('GITHUB_ACTIONS'), 'true') ||
     !identical(Sys.getenv('GITHUB_REF'), 'refs/heads/main') ||
     !Sys.getenv('GITHUB_EVENT_NAME') %in% c('workflow_dispatch', 'schedule')))
   stop('Privileged operations require the canonical GitHub main workflow')
+if (length(args) == 1L && args %in% c('--full', '--recover'))
+  options(apm.conalco.phase_log = file.path(getwd(), 'logs/conalco_daily',
+    'runner_phases.jsonl'))
 if (identical(args, '--offline')) {
   actions_preflight()
 } else if (identical(args, '--preflight')) {
   actions_with_reference(\() actions_preflight(online = T))
 } else if (identical(args, '--full')) {
-  actions_with_reference(\() actions_full_run())
+  actions_phase('full.execution',
+    actions_with_reference(\() actions_full_run()))
 } else if (identical(args, '--retain-attempt')) {
   actions_retain_attempt()
 } else if (identical(args, '--prepare-seed')) {
@@ -54,7 +58,8 @@ if (identical(args, '--offline')) {
 } else if (identical(args, '--pack-state')) {
   actions_state_pack('tmp/actions_state_seed')
 } else if (identical(args, '--recover')) {
-  actions_with_reference(\() actions_full_run(recovery = T))
+  actions_phase('recovery.execution',
+    actions_with_reference(\() actions_full_run(recovery = T)))
 } else if (length(args) == 1L &&
     args %in% c('--tests-fast', '--tests', '--tests-extended')) {
   started = proc.time()[['elapsed']]

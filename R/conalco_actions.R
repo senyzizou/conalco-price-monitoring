@@ -63,13 +63,20 @@ actions_day_exists = \(records, date) {
 actions_phase = \(phase, code) {
   started = proc.time()[['elapsed']]
   completed = F
+  path = getOption('apm.conalco.phase_log')
+  record = \(event, ...) {
+    if (!is.null(path)) tryCatch(log_event(path, event, phase = phase, ...),
+      error = \(e) cat('[Conalco] Phase log write failed.\n'))
+  }
   cat('[Conalco] ', phase, ': start\n', sep = '')
   flush.console()
+  record('phase_start')
   on.exit({
-    cat(sprintf('[Conalco] %s: %s (%.2f s)\n', phase,
-      if (completed) 'ok' else 'failed',
-      proc.time()[['elapsed']] - started))
+    status = if (completed) 'ok' else 'failed'
+    elapsed = proc.time()[['elapsed']] - started
+    cat(sprintf('[Conalco] %s: %s (%.2f s)\n', phase, status, elapsed))
     flush.console()
+    record('phase_end', status = status, elapsed_seconds = elapsed)
   }, add = T)
   result = force(code)
   completed = T
@@ -472,7 +479,7 @@ actions_full_run = \(recovery = FALSE) {
     stop('Full Run is restricted to an explicit GitHub main dispatch')
   actions_preflight(check_local_history = FALSE)
   dav = actions_dav()
-  lock = actions_state_lock(dav)
+  lock = actions_phase('full.writer_lock', actions_state_lock(dav))
   on.exit({
     if (!dav('DELETE', lock) %in% c(200L, 204L))
       warning('Remote writer lock needs manual recovery')
@@ -480,7 +487,8 @@ actions_full_run = \(recovery = FALSE) {
   scratch = tempfile('runner_state_')
   dir.create(scratch)
   on.exit(unlink(scratch, recursive = TRUE), add = TRUE)
-  restored = actions_state_restore(dav, scratch)
+  restored = actions_phase('full.state_restore',
+    actions_state_restore(dav, scratch))
   # Replace only the disposable runner copy after full remote validation.
   if (dir.exists(CONALCO_DAILY_ROOT))
     unlink(CONALCO_DAILY_ROOT, recursive = TRUE)
@@ -496,10 +504,16 @@ actions_full_run = \(recovery = FALSE) {
   } else if (conalco_storage_mode() == 'versioned') {
     conalco_sync_legacy()
   }
-  history = actions_history()
+  history = actions_phase('full.history_activate', actions_history())
   if (conalco_storage_mode('ukebox_results') == 'incremental')
     history$versioned_checkpoint = restored$commit
   history$package_project = restored$package_project
+  if (!is.null(history$versioned_checkpoint) &&
+      conalco_storage_mode() == 'legacy') {
+    dates = unlist(history$versioned_checkpoint$dates, use.names = F)
+    frozen = conalco_versioned_statistics(conalco_versioned_root(), dates)
+    withr::local_options(apm.conalco.frozen_statistics = frozen)
+  }
   today = format(Sys.time(), '%Y-%m-%d', tz = 'Europe/Berlin')
   if (conalco_storage_mode() == 'versioned' ||
       conalco_storage_mode('ukebox_results') == 'incremental') {
@@ -524,11 +538,13 @@ actions_full_run = \(recovery = FALSE) {
       archive_root = if (conalco_storage_mode() == 'versioned')
         conalco_raw_bridge(manifest_path) else CONALCO_DAILY_ROOT
       paths = actions_archive_paths(manifest_path, root = archive_root)
-      daily_archive_run(manifest_path, backup_directory,
-        root = archive_root, paths = paths)
+      actions_phase('full.raw_pack',
+        daily_archive_run(manifest_path, backup_directory,
+          root = archive_root, paths = paths))
     }
     receipt = read_json(paste0(archive, '.json'))
-    record = actions_verify_archive(archive, receipt)
+    record = actions_phase('full.raw_validate',
+      actions_verify_archive(archive, receipt))
     rescue = ensure_dir('tmp/actions_recovery')
     for (source in c(archive, paste0(archive, '.json'))) {
       target = file.path(rescue, basename(source))
@@ -538,11 +554,13 @@ actions_full_run = \(recovery = FALSE) {
       } else if (!file.copy(source, target))
         stop('Cannot retain validated recovery archive')
     }
-    durable = actions_upload_archive(archive, receipt, record$date, dav)
+    durable = actions_phase('full.raw_publish',
+      actions_upload_archive(archive, receipt, record$date, dav))
     actions_history_unchanged(history)
     actions_publish_receipt(id, durable)
-    private_check_panel()
-    actions_state_publish(dav, history, 'tmp/actions_state')
+    actions_phase('full.panel_validate', private_check_panel())
+    actions_phase('full.results_publish',
+      actions_state_publish(dav, history, 'tmp/actions_state'))
     cat('Complete panel committed to UKEbox:', id, '\n')
     writeLines(id, 'tmp/actions_run_id.txt')
     return(invisible(id))
@@ -588,7 +606,8 @@ actions_full_run = \(recovery = FALSE) {
   config$disabled_reason = NULL
   path = 'tmp/actions_config.json'
   write_json(config, path, auto_unbox = TRUE, pretty = TRUE, null = 'null')
-  id = run_conalco_daily(manual = TRUE, config_file = path, finalize = finish)
+  id = actions_phase('full.daily_pipeline',
+    run_conalco_daily(manual = T, config_file = path, finalize = finish))
   if (!file.exists('tmp/actions_run_id.txt'))
     stop('No complete archived run; publication blocked: ', id)
   invisible(id)
@@ -849,7 +868,8 @@ actions_state_publish = \(dav, history, directory) {
   if (conalco_storage_mode('ukebox_results') == 'incremental') {
     actions_history_unchanged(history)
     root = if (conalco_storage_mode() == 'versioned')
-      conalco_versioned_root() else conalco_sync_legacy()
+      conalco_versioned_root() else
+      actions_phase('state.sync_legacy', conalco_sync_legacy())
     return(conalco_publish_increment(root, directory,
       previous = history$versioned_checkpoint,
       publish = \(source, path) actions_dav_publish(dav, source, path),
