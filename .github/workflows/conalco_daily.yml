@@ -4,7 +4,9 @@ run-name: >-
   (validated versioned results; private raw storage)
 
 on:
-  # Scheduled collection remains paused pending separate authorisation.
+  schedule:
+    - cron: '0 9 * * *'
+      timezone: Europe/Berlin
   workflow_dispatch:
     inputs:
       mode:
@@ -114,7 +116,7 @@ jobs:
           UKEBOX_WEBDAV_URL: ${{ secrets.UKEBOX_WEBDAV_URL }}
           UKEBOX_USERNAME: ${{ secrets.UKEBOX_USERNAME }}
           UKEBOX_APP_PASSWORD: ${{ secrets.UKEBOX_APP_PASSWORD }}
-          CONALCO_MODE: ${{ inputs.mode }}
+          CONALCO_MODE: ${{ inputs.mode || 'full' }}
           RECOVERY_ARCHIVE: >-
             ${{ inputs.mode == 'recover' && secrets.CONALCO_RECOVERY_ARCHIVE
               || '' }}

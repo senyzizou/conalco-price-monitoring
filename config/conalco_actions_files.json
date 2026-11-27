@@ -14,7 +14,7 @@
     },
     {
       "path": ".github/workflows/conalco_daily.yml",
-      "sha256": "7397374464cd240073ac3deeebc3c7e10dee9cde7575fa9134b0500df807a269"
+      "sha256": "6657853c396ff013b50065706887f63463cc77f799b3e1d34acee9e0a79ae5e7"
     },
     {
       "path": ".gitignore",
@@ -110,7 +110,7 @@
     },
     {
       "path": "docs/operations.md",
-      "sha256": "440400ab45ed16254ce89465a367640c8b700f5ff4bd009b5b073213f1d8342f"
+      "sha256": "feed803ec1e7165bc6ebf420afedc4e7e7c1a31f5fb198493d61a4438ad7d6d9"
     },
     {
       "path": "renv.lock",
@@ -182,7 +182,7 @@
     },
     {
       "path": "tests/testthat/test-conalco-actions.R",
-      "sha256": "cc6fa08bb84ecee41a3d75d99f326f811cce58025b654887faa843d9eef5b936"
+      "sha256": "b91a04659e15e4e307744e65385c6ffeb61e342b88470730312105a97c0270ed"
     },
     {
       "path": "tests/testthat/test-conalco-daily.R",
@@ -198,7 +198,7 @@
     },
     {
       "path": "tests/testthat/test-conalco-public-security.R",
-      "sha256": "469b4727db582ff1a028fdef720f362ded99e574269f553d9b5e2e809edeaf63"
+      "sha256": "22a17ba7f1dd14c8eec7af1ed63e32f6592667ee06f4badf495082b71eaab01b"
     },
     {
       "path": "tests/testthat/test-conalco-reference.R",

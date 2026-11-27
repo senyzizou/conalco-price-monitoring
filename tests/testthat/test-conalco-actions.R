@@ -867,11 +867,14 @@ for (present_today in c(F, T)) {
     local_dir(daily_test_root())
     rlang::local_bindings(CONALCO_DAILY_ROOT = 'data/conalco/daily',
       .env = environment(actions_full_run))
-    date = if (present_today) berlin_date(Sys.time()) else '2026-10-21'
+    today = berlin_date(Sys.time())
+    date = if (present_today) today else as.character(as.Date(today) - 2L)
     cloud = actions_test_cloud_checkout(date)
     state = cloud$state
     state$collector_calls = 0L
-    local_envvar(c(GITHUB_ACTIONS = 'true', GITHUB_REF = 'refs/heads/main'))
+    local_envvar(c(GITHUB_ACTIONS = 'true', GITHUB_REF = 'refs/heads/main',
+      GITHUB_EVENT_NAME = 'schedule', CONALCO_MODE = NA_character_,
+      RECOVERY_ARCHIVE = NA_character_))
     rlang::local_bindings(actions_dav = \() state$dav,
       run_conalco_daily = \(...) {
         state$collector_calls = state$collector_calls + 1L

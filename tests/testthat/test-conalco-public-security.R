@@ -78,7 +78,7 @@ test_that('public commits reject other repositories before any Git command', {
     'canonical repository')
 })
 
-test_that('future schedule publication requires the canonical main context', {
+test_that('schedule publication requires the canonical main context', {
   local_envvar(c(GITHUB_ACTIONS = 'true', GITHUB_REF = 'refs/heads/main',
     GITHUB_REPOSITORY = 'senyzizou/conalco-price-monitoring'))
   expect_true(conalco_manual_gate('publish', 'schedule'))
@@ -86,5 +86,9 @@ test_that('future schedule publication requires the canonical main context', {
   expect_error(conalco_manual_gate('publish', 'schedule'), 'manual')
   workflow = readLines(file.path(APM_ROOT,
     '.github/workflows/conalco_daily.yml'))
-  expect_false(any(grepl('^  schedule:|cron:', workflow)))
+  schedule = which(workflow == '  schedule:')
+  expect_length(schedule, 1L)
+  expect_identical(workflow[schedule + 1:2], c("    - cron: '0 9 * * *'",
+    '      timezone: Europe/Berlin'))
+  expect_equal(sum(grepl('cron:', workflow, fixed = T)), 1L)
 })
