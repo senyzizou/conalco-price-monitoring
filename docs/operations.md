@@ -1,6 +1,6 @@
 # Conalco-Betrieb
 
-Der zunächst manuelle Workflow verwendet einen Standard-Runner. Das R-Skript
+Der Workflow verwendet einen Standard-Runner. Das R-Skript
 stellt AGB-, Listing- und Konfigurationsreferenzen aus einem festgelegten
 vorhandenen privaten Roharchiv bereit. Hashes für Archiv, Sidecar und die drei
 benötigten Mitglieder stehen in `config/conalco_reference_pins.json`.
@@ -32,9 +32,15 @@ Ableitungen bleiben in R. Das versionierte Schema steht unter `config/`.
    und den validierenden Restore. Danach einen separat freigegebenen
    neuen Berliner Erhebungstag mit `full` prüfen. Den Tagescommit und
    Signale zur Bereinigung privat kontrollieren.
-4. Erst nach erfolgreichem Test den Zeitplan separat freigeben. Für
-   unbeaufsichtigte Ausführung darf das Environment keine tägliche
-   Genehmigung verlangen. Der Standardbranch bleibt geschützt.
+4. Der freigegebene Zeitplan startet den Full Run täglich um 09:00 Uhr
+   (Europe/Berlin), auch am Wochenende. Das Environment verlangt keine
+   tägliche Genehmigung. Der Standardbranch bleibt geschützt.
+
+Nach einem fehlgeschlagenen Tag versucht der nächste Zeitplanlauf die
+Erhebung für seinen eigenen Berliner Kalendertag ausgehend vom letzten
+gültigen Tagescommit. Eine Lücke wird dabei nicht automatisch nachgetragen.
+Ein verbliebener Writer-Lock blockiert den nächsten Lauf bis zur Klärung.
+Der private Sicherungsschritt läuft auch nach einem fehlgeschlagenen Lauf.
 
 Die privaten R-Diagnosen werden während eines Jobs in seiner temporären
 Umgebung gehalten. Eine strukturierte Phasenspur mit Status und Laufzeiten
