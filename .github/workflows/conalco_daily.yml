@@ -39,7 +39,7 @@ jobs:
       github.repository == 'senyzizou/conalco-price-monitoring'
     environment: conalco-ukebox
     runs-on: ubuntu-24.04
-    timeout-minutes: 110
+    timeout-minutes: 140
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -64,7 +64,7 @@ jobs:
             exit 1
           fi
       - name: Offline pipeline and harmless WebDAV check
-        timeout-minutes: 30
+        timeout-minutes: 60
         env:
           CONALCO_REFERENCE_ARCHIVE: ${{ secrets.CONALCO_REFERENCE_ARCHIVE }}
           UKEBOX_WEBDAV_URL: ${{ secrets.UKEBOX_WEBDAV_URL }}
